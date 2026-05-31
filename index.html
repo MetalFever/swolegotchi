@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Swole-gotchi: Phase 1</title>
+    <title>Swole-gotchi: Phase 2</title>
     <style>
-        /* Mobile-first Reset & App Layout */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            user-select: none; /* Prevents text highlighting on rapid tapping */
+            user-select: none;
             -webkit-user-select: none;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background-color: #0c0c0e;
+            color: #e2e8f0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -31,109 +30,122 @@
             max-width: 450px;
             height: 100vh;
             max-height: 850px;
-            background-color: #1a1a1a;
-            border: 4px solid #ccff00; /* Neon Gym/Retro color theme */
-            border-radius: 12px;
+            background-color: #141416;
+            border: 4px solid #ccff00;
+            border-radius: 16px;
             display: flex;
             flex-direction: column;
             padding: 16px;
             position: relative;
         }
 
-        /* Screen Header & Game Over */
         header {
             text-align: center;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #22252a;
         }
 
         h1 {
             color: #ccff00;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        /* Avatar / Display Panel */
         .display-panel {
-            flex: 1;
+            height: 140px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-color: #0a0a0a;
-            border-radius: 8px;
-            margin: 16px 0;
-            border: 2px solid #262626;
-            position: relative;
+            background-color: #080809;
+            border-radius: 12px;
+            margin: 12px 0;
+            border: 2px solid #22252a;
         }
 
         .avatar {
-            font-size: 5rem;
-            margin-bottom: 12px;
-            transition: transform 0.2s ease;
+            font-size: 4.5rem;
+            margin-bottom: 8px;
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .status-text {
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             font-weight: bold;
-            color: #ffffff;
+            color: #fff;
             text-align: center;
+            padding: 0 10px;
         }
 
-        /* Stats Panel Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 16px;
+            gap: 8px;
+            margin-bottom: 12px;
         }
 
         .stat-box {
-            background-color: #222;
-            padding: 10px;
-            border-radius: 6px;
+            background-color: #1d1d21;
+            padding: 8px 12px;
+            border-radius: 8px;
             border-left: 4px solid #ccff00;
         }
 
+        .stat-box.toxic-profile {
+            border-left-color: #ff3b30;
+        }
+
         .stat-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
-            color: #888;
-            margin-bottom: 4px;
+            color: #71717a;
+            margin-bottom: 2px;
         }
 
         .stat-value {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: bold;
             color: #fff;
         }
 
-        /* Interaction Panel (Buttons) */
-        .controls-panel {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
+        .panel-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #a1a1aa;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
         }
 
-        .action-row {
+        .action-block {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 6px;
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 2px;
+            margin-bottom: 12px;
         }
 
         button {
             background-color: #ccff00;
-            color: #121212;
+            color: #141416;
             border: none;
-            padding: 14px;
-            font-size: 1rem;
+            padding: 12px;
+            font-size: 0.85rem;
             font-weight: bold;
             border-radius: 8px;
             text-transform: uppercase;
             cursor: pointer;
             box-shadow: 0 4px #99cc00;
-            transition: transform 0.1s, box-shadow 0.1s;
+            transition: transform 0.05s, box-shadow 0.05s;
         }
 
         button:active {
@@ -142,195 +154,269 @@
         }
 
         button:disabled {
-            background-color: #444;
-            color: #777;
+            background-color: #27272a;
+            color: #52525b;
             box-shadow: none;
             cursor: not-allowed;
             transform: none;
         }
 
+        button.job-btn {
+            background-color: #e4e4e7;
+            box-shadow: 0 4px #a1a1aa;
+        }
+        button.job-btn:active { box-shadow: 0 0px #a1a1aa; }
+
         button.sleep-btn {
             background-color: #00e5ff;
-            color: #121212;
             box-shadow: 0 4px #00a8cc;
         }
-        button.sleep-btn:active {
-            box-shadow: 0 0px #00a8cc;
-        }
+        button.sleep-btn:active { box-shadow: 0 0px #00a8cc; }
         button.sleep-btn.sleeping {
-            background-color: #ff0055;
-            color: white;
-            box-shadow: 0 4px #b3003b;
+            background-color: #ff3b30;
+            color: #fff;
+            box-shadow: 0 4px #b3241c;
         }
 
-        /* Death Overlay Screen */
+        .shop-item-btn {
+            background-color: #27272a;
+            color: #fff;
+            box-shadow: 0 3px #18181b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            text-align: left;
+        }
+        .shop-item-btn:active { box-shadow: 0 0px #18181b; }
+        .shop-item-btn .item-meta {
+            font-size: 0.65rem;
+            color: #a1a1aa;
+            text-transform: none;
+            font-weight: normal;
+            margin-top: 2px;
+        }
+        .shop-item-btn .item-cost {
+            color: #ccff00;
+            font-size: 1rem;
+        }
+        .shop-item-btn.chemical-hazard .item-cost {
+            color: #ff453a;
+        }
+
         .death-screen {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.95);
+            background-color: rgba(10, 10, 11, 0.98);
             display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 10;
-            border-radius: 8px;
-            padding: 20px;
+            z-index: 20;
+            padding: 24px;
             text-align: center;
         }
 
         .death-screen h2 {
-            color: #ff0055;
-            font-size: 2rem;
-            margin-bottom: 16px;
+            color: #ff3b30;
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
         }
 
         .death-screen p {
             margin-bottom: 24px;
-            line-height: 1.4;
+            line-height: 1.5;
+            color: #d4d4d8;
         }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <!-- Death Screen Overlay -->
         <div class="death-screen" id="deathScreen">
-            <h2>GAME OVER</h2>
-            <p id="deathReason">Your bodybuilder catabolized into absolute nothingness.</p>
-            <button onclick="resetGame()">Try Again</button>
+            <h2>CRITICAL FAILURE</h2>
+            <p id="deathReason">Your bodybuilder passed away.</p>
+            <button onclick="resetGame()" style="width: 60%;">Respawn Lifter</button>
         </div>
 
         <header>
-            <h1>Swole-gotchi</h1>
+            <h1>Swole-gotchi: Lab Edition</h1>
         </header>
 
-        <!-- Dynamic Avatar Display -->
         <div class="display-panel">
             <div class="avatar" id="avatar">💪</div>
-            <div class="status-text" id="statusText">Feeling Fine</div>
+            <div class="status-text" id="statusText">System Diagnostic: Green</div>
         </div>
 
-        <!-- Real-Time Metrics -->
         <div class="stats-grid">
             <div class="stat-box">
                 <div class="stat-label">Muscle Mass</div>
                 <div class="stat-value" id="statMuscle">10</div>
             </div>
             <div class="stat-box">
-                <div class="stat-label">Cash</div>
+                <div class="stat-label">Liquidity (Cash)</div>
                 <div class="stat-value" id="statCash">$10</div>
             </div>
             <div class="stat-box">
-                <div class="stat-label">Fullness</div>
+                <div class="stat-label">Gastro Fullness</div>
                 <div class="stat-value" id="statFullness">100/100</div>
             </div>
             <div class="stat-box">
-                <div class="stat-label">Energy</div>
+                <div class="stat-label">Neural Energy</div>
                 <div class="stat-value" id="statEnergy">100/100</div>
+            </div>
+            <div class="stat-box toxic-profile" style="grid-column: span 2;">
+                <div class="stat-label">Systemic Toxicity (Hepatic/Cardio Strain)</div>
+                <div class="stat-value" id="statToxicity">0/100</div>
             </div>
         </div>
 
-        <!-- Action Grid -->
-        <div class="controls-panel">
-            <div class="action-row">
-                <button id="btnTrain" onclick="trainHard()">🏋️ Lift Heavy</button>
-                <button id="btnFeed" onclick="feedMeal()">🍗 Eat Clean</button>
-            </div>
-            <button id="btnSleep" class="sleep-btn" onclick="toggleSleep()">💤 Go to Sleep</button>
+        <div class="panel-title">Operations</div>
+        <div class="action-block">
+            <button id="btnTrain" onclick="executeWorkout()">🏋️ Pump Iron</button>
+            <button id="btnJob" class="job-btn" onclick="executeJobShift()">💼 Grind Shift</button>
         </div>
+
+        <div class="panel-title">Nutrition & Chemistry Shop</div>
+        <div class="shop-grid">
+            <button id="btnBuyFood" class="shop-item-btn" onclick="purchaseConsumable('food')">
+                <div>
+                    <div>🍗 Chicken & Rice Meals</div>
+                    <div class="item-meta">Fullness +35 | Toxicity 0</div>
+                </div>
+                <div class="item-cost">$8</div>
+            </button>
+
+            <button id="btnBuyProtein" class="shop-item-btn" onclick="purchaseConsumable('protein')">
+                <div>
+                    <div>🥤 Pure Whey Isolate</div>
+                    <div class="item-meta">Permanently adds +1 Muscle per workout loop</div>
+                </div>
+                <div class="item-cost">$25</div>
+            </button>
+
+            <button id="btnBuyPre" class="shop-item-btn" onclick="purchaseConsumable('preworkout')">
+                <div>
+                    <div>⚡ High-Stim Pre-Workout</div>
+                    <div class="item-meta">Energy +40 | Toxicity +12</div>
+                </div>
+                <div class="item-cost">$15</div>
+            </button>
+
+            <button id="btnBuySauce" class="shop-item-btn chemical-hazard" onclick="purchaseConsumable('steroids')">
+                <div>
+                    <div>🧪 The "Secret Sauce" (Anabolics)</div>
+                    <div class="item-meta">Muscle Mass +35 | Toxicity +38</div>
+                </div>
+                <div class="item-cost">$60</div>
+            </button>
+        </div>
+
+        <button id="btnSleep" class="sleep-btn" onclick="toggleSleepState()">💤 Enter Stasis (Sleep)</button>
     </div>
 
     <script>
-        // Game State Variables
         let state = {
             muscle: 10,
-            cash: 10,
+            cash: 20, 
             fullness: 100,
             energy: 100,
+            toxicity: 0,
+            proteinUpgrades: 0, 
             isSleeping: false,
             isDead: false,
-            starvationTimer: 0
+            starvationTicks: 0
         };
 
-        // Core Configuration Constants
-        const LIMITS = { maxFullness: 100, maxEnergy: 100 };
-        const DECAY_INTERVAL = 1000; // 1 second ticks
-
-        // Game loop ticker variables
-        let gameLoopTicker;
+        const CAPACITIES = { maxFullness: 100, maxEnergy: 100, fatalToxicity: 100 };
+        let executionInterval;
 
         function initGame() {
             state = {
                 muscle: 10,
-                cash: 10,
+                cash: 20,
                 fullness: 100,
                 energy: 100,
+                toxicity: 0,
+                proteinUpgrades: 0,
                 isSleeping: false,
                 isDead: false,
-                starvationTimer: 0
+                starvationTicks: 0
             };
-            document.getElementById('deathScreen').style.display = 'none';
-            updateUI();
             
-            if (gameLoopTicker) clearInterval(gameLoopTicker);
-            gameLoopTicker = setInterval(gameLoop, DECAY_INTERVAL);
+            document.getElementById('deathScreen').style.display = 'none';
+            const sleepBtn = document.getElementById('btnSleep');
+            sleepBtn.innerText = "💤 Enter Stasis (Sleep)";
+            sleepBtn.className = "sleep-btn";
+            
+            renderInterface();
+            
+            if (executionInterval) clearInterval(executionInterval);
+            executionInterval = setInterval(processSystemTick, 1000);
         }
 
-        // Main Simulation Tick (Runs every second)
-        function gameLoop() {
+        function processSystemTick() {
             if (state.isDead) return;
 
             if (state.isSleeping) {
-                // Sleep mechanics: Recover energy rapidly, slower hunger decay
-                state.energy = Math.min(LIMITS.maxEnergy, state.energy + 8);
-                state.fullness = Math.max(0, state.fullness - 0.5);
+                state.energy = Math.min(CAPACITIES.maxEnergy, state.energy + 10);
+                state.fullness = Math.max(0, state.fullness - 0.75); 
+                state.toxicity = Math.max(0, state.toxicity - 2.5); 
             } else {
-                // Standard real-time active decay variables
-                state.fullness = Math.max(0, state.fullness - 2);
-                state.energy = Math.max(0, state.energy - 1);
+                state.fullness = Math.max(0, state.fullness - 2.5);
+                state.energy = Math.max(0, state.energy - 1.5);
+                state.toxicity = Math.max(0, state.toxicity - 0.75); 
             }
 
-            // Atrophy / Starvation System
             if (state.fullness <= 0) {
-                state.muscle = Math.max(0, state.muscle - 1);
-                state.starvationTimer++;
-                
-                // If starving continuously for 15 seconds, trigger death state
-                if (state.starvationTimer >= 15) {
-                    triggerDeath("Your lifter starved to death. Hard to make gains when you don't eat.");
+                state.muscle = Math.max(0, state.muscle - 1.5);
+                state.starvationTicks++;
+                if (state.starvationTicks >= 12) {
+                    executeKillSequence("Biological Shutdown: Heart muscle catabolized due to total starvation.");
                 }
             } else {
-                state.starvationTimer = 0;
+                state.starvationTicks = 0;
             }
 
-            updateUI();
+            if (state.toxicity >= CAPACITIES.fatalToxicity) {
+                executeKillSequence("Organ System Collapse: Hepatic/Cardio toxicity metrics exceeded safe human limitations (100%).");
+            }
+
+            renderInterface();
         }
 
-        // Actions Panels Logic
-        function trainHard() {
-            if (state.energy < 20 || state.fullness < 15) return;
+        function executeWorkout() {
+            if (state.energy < 25 || state.fullness < 20 || state.isSleeping) return;
+
+            let yieldCalculation = 4 + state.proteinUpgrades;
             
-            state.muscle += 5;
-            state.energy = Math.max(0, state.energy - 20);
-            state.fullness = Math.max(0, state.fullness - 15);
-            state.cash += 5; // Simulating small crowd donations/payouts for lifting heavy
-            
-            animateAvatar();
-            updateUI();
+            if (state.toxicity > 75) {
+                yieldCalculation = yieldCalculation * 0.5;
+            }
+
+            state.muscle += yieldCalculation;
+            state.energy = Math.max(0, state.energy - 25);
+            state.fullness = Math.max(0, state.fullness - 20);
+
+            animateDisplayAvatar();
+            renderInterface();
         }
 
-        function feedMeal() {
-            if (state.cash < 5) return;
-            
-            state.cash -= 5;
-            state.fullness = Math.min(LIMITS.maxFullness, state.fullness + 30);
-            updateUI();
+        function executeJobShift() {
+            if (state.energy < 30 || state.isSleeping) return;
+
+            state.cash += 35;
+            state.energy = Math.max(0, state.energy - 30);
+            state.fullness = Math.max(0, state.fullness - 10); 
+
+            renderInterface();
         }
 
-        function toggleSleep() {
+        function toggleSleepState() {
             state.isSleeping = !state.isSleeping;
             const sleepBtn = document.getElementById('btnSleep');
             
@@ -338,69 +424,111 @@
                 sleepBtn.innerText = "☀️ Wake Up";
                 sleepBtn.classList.add('sleeping');
             } else {
-                sleepBtn.innerText = "💤 Go to Sleep";
+                sleepBtn.innerText = "💤 Enter Stasis (Sleep)";
                 sleepBtn.classList.remove('sleeping');
             }
-            updateUI();
+            renderInterface();
         }
 
-        // State Machine to Interface Updates
-        function updateUI() {
-            // Render basic stats integers
+        function purchaseConsumable(type) {
+            if (state.isSleeping) return;
+
+            switch(type) {
+                case 'food':
+                    if (state.cash >= 8 && state.fullness < CAPACITIES.maxFullness) {
+                        state.cash -= 8;
+                        state.fullness = Math.min(CAPACITIES.maxFullness, state.fullness + 35);
+                    }
+                    break;
+                case 'protein':
+                    if (state.cash >= 25) {
+                        state.cash -= 25;
+                        state.proteinUpgrades += 1;
+                    }
+                    break;
+                case 'preworkout':
+                    if (state.cash >= 15) {
+                        state.cash -= 15;
+                        state.energy = Math.min(CAPACITIES.maxEnergy, state.energy + 40);
+                        state.toxicity += 12;
+                    }
+                    break;
+                case 'steroids':
+                    if (state.cash >= 60) {
+                        state.cash -= 60;
+                        state.muscle += 35; 
+                        state.toxicity += 38; 
+                    }
+                    break;
+            }
+            renderInterface();
+        }
+
+        function renderInterface() {
             document.getElementById('statMuscle').innerText = Math.floor(state.muscle);
             document.getElementById('statCash').innerText = `$${state.cash}`;
-            document.getElementById('statFullness').innerText = `${Math.floor(state.fullness)}/${LIMITS.maxFullness}`;
-            document.getElementById('statEnergy').innerText = `${Math.floor(state.energy)}/${LIMITS.maxEnergy}`;
+            document.getElementById('statFullness').innerText = `${Math.floor(state.fullness)}/${CAPACITIES.maxFullness}`;
+            document.getElementById('statEnergy').innerText = `${Math.floor(state.energy)}/${CAPACITIES.maxEnergy}`;
+            document.getElementById('statToxicity').innerText = `${Math.floor(state.toxicity)}/100`;
 
-            // Control Button Disable Interlocks
-            document.getElementById('btnTrain').disabled = state.isSleeping || state.energy < 20 || state.fullness < 15;
-            document.getElementById('btnFeed').disabled = state.isSleeping || state.cash < 5 || state.fullness >= LIMITS.maxFullness;
+            const activeLocks = state.isSleeping;
+            document.getElementById('btnTrain').disabled = activeLocks || state.energy < 25 || state.fullness < 20;
+            document.getElementById('btnJob').disabled = activeLocks || state.energy < 30;
+            
+            document.getElementById('btnBuyFood').disabled = activeLocks || state.cash < 8 || state.fullness >= CAPACITIES.maxFullness;
+            document.getElementById('btnBuyProtein').disabled = activeLocks || state.cash < 25;
+            document.getElementById('btnBuyPre').disabled = activeLocks || state.cash < 15;
+            document.getElementById('btnBuySauce').disabled = activeLocks || state.cash < 60;
 
-            // Compute dynamic expressions and updates
             const avatarEl = document.getElementById('avatar');
             const statusEl = document.getElementById('statusText');
 
             if (state.isSleeping) {
                 avatarEl.innerText = "😴";
-                statusEl.innerText = "Zzz... Recovering...";
+                statusEl.innerText = "Stasis Mode Active: Flush Toxins & Recharging.";
                 statusEl.style.color = "#00e5ff";
                 return;
             }
 
-            // Muscle Milestone Evolution (Visual Tiers)
-            if (state.muscle < 10) {
+            if (state.muscle < 15) {
                 avatarEl.innerText = "🧍";
-                statusEl.innerText = "Skinny atrophied frame. Needs food and iron.";
-                statusEl.style.color = "#ff0055";
-            } else if (state.muscle >= 10 && state.muscle < 50) {
-                avatarEl.innerText = "💪";
-                statusEl.innerText = "Gains are starting to show.";
                 statusEl.style.color = "#ffffff";
-            } else {
+                statusEl.innerText = "Atrophied Frame. Lacks training baseline.";
+            } else if (state.muscle >= 15 && state.muscle < 75) {
+                avatarEl.innerText = "💪";
+                statusEl.style.color = "#ffffff";
+                statusEl.innerText = "Gains verified. Frame stabilization normal.";
+            } else if (state.muscle >= 75 && state.toxicity <= 50) {
                 avatarEl.innerText = "🏋️";
-                statusEl.innerText = "Absolute Unit territory!";
                 statusEl.style.color = "#ccff00";
+                statusEl.innerText = "Natural Elite Peak. Highly optimized.";
+            } else if (state.muscle >= 75 && state.toxicity > 50) {
+                avatarEl.innerText = "👹"; 
+                statusEl.style.color = "#ff453a";
+                statusEl.innerText = "WARNING: Mutant Mutation Profile Detected. Organic limits broken.";
             }
 
-            // Mood/Status overrides based on contextual threat values
-            if (state.fullness < 25) {
-                statusEl.innerText = "⚠️ STARVING! Muscle is wasting away!";
-                statusEl.style.color = "#ff0055";
-            } else if (state.energy < 25) {
-                statusEl.innerText = "Exhausted. Needs a nap.";
+            if (state.toxicity > 75) {
+                statusEl.innerText = "☣️ CRITICAL TOXICITY: Organ Failure Impending. Recovery highly compromised.";
+                statusEl.style.color = "#ff3b30";
+            } else if (state.fullness < 20) {
+                statusEl.innerText = "🚨 Starvation state initialized. Mass losing stability.";
+                statusEl.style.color = "#ff3b30";
+            } else if (state.energy < 20) {
+                statusEl.innerText = "Central Nervous System exhaustion detected.";
                 statusEl.style.color = "#ffaa00";
             }
         }
 
-        function animateAvatar() {
+        function animateDisplayAvatar() {
             const av = document.getElementById('avatar');
-            av.style.transform = 'scale(1.3)';
-            setTimeout(() => { av.style.transform = 'scale(1)'; }, 150);
+            av.style.transform = 'scale(1.25) rotate(5deg)';
+            setTimeout(() => { av.style.transform = 'scale(1) rotate(0deg)'; }, 150);
         }
 
-        function triggerDeath(reason) {
+        function executeKillSequence(reason) {
             state.isDead = true;
-            clearInterval(gameLoopTicker);
+            clearInterval(executionInterval);
             document.getElementById('deathReason').innerText = reason;
             document.getElementById('deathScreen').style.display = 'flex';
         }
@@ -409,7 +537,6 @@
             initGame();
         }
 
-        // Kick off game on setup window mount load
         window.onload = initGame;
     </script>
 </body>
