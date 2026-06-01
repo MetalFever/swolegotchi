@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Swole-gotchi: Phase 2</title>
+    <title>Swole-gotchi: Handheld Edition</title>
     <style>
+        /* Base Reset & Hardware Framing */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -14,9 +15,11 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-            background-color: #0c0c0e;
-            color: #e2e8f0;
+            font-family: 'Courier New', Courier, monospace; /* Retro computing typeface */
+            background-color: #1a1a24;
+            background-image: radial-gradient(#2c2c3e 20%, transparent 20%), radial-gradient(#2c2c3e 20%, transparent 20%);
+            background-size: 16px 16px;
+            background-position: 0 0, 8px 8px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -25,301 +28,272 @@
             overflow: hidden;
         }
 
-        .app-container {
+        /* The Physical Toy Shell */
+        .hardware-shell {
             width: 100%;
-            max-width: 450px;
-            height: 100vh;
-            max-height: 850px;
-            background-color: #141416;
-            border: 4px solid #ccff00;
-            border-radius: 16px;
+            max-width: 420px;
+            height: 98vh;
+            max-height: 820px;
+            background: linear-gradient(135deg, #ff007f 0%, #ff0055 100%); /* Hot Translucent Neon Pink Shell */
+            border: 8px solid #3a001a;
+            border-radius: 60px 60px 80px 80px; /* Classic teardrop toy mold contour */
+            box-shadow: inset -10px -10px 15px rgba(0,0,0,0.4), inset 10px 10px 15px rgba(255,255,255,0.3), 0 20px 35px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
-            padding: 16px;
+            padding: 24px;
             position: relative;
         }
 
-        header {
+        /* Front Case Panel Branding printed on plastic */
+        .brand-stamp {
             text-align: center;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #22252a;
-        }
-
-        h1 {
-            color: #ccff00;
-            font-size: 1.3rem;
+            color: #ffd700;
+            font-size: 1.1rem;
+            font-weight: 900;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            text-shadow: 2px 2px #3a001a;
+            margin-bottom: 12px;
         }
 
-        .display-panel {
-            height: 140px;
+        /* Retro Dot-Matrix Virtual LCD Screen Container */
+        .lcd-screen {
+            background-color: #a3b899; /* Classic passive olive greenish grey matrix window */
+            border: 12px solid #2d3329;
+            border-radius: 12px;
+            box-shadow: inset 4px 4px 10px rgba(0,0,0,0.5);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            height: 340px;
+            color: #1c201a;
+        }
+
+        /* Screen Glare Overlay effect */
+        .lcd-screen::after {
+            content: " ";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 50%);
+            pointer-events: none;
+        }
+
+        /* Matrix Status Ticker */
+        .lcd-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-bottom: 1px dashed #1c201a;
+            padding-bottom: 4px;
+            margin-bottom: 8px;
+        }
+
+        /* Dedicated Micro-Grid for Living Avatar Display Zone */
+        .avatar-zone {
+            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-color: #080809;
-            border-radius: 12px;
-            margin: 12px 0;
-            border: 2px solid #22252a;
+            position: relative;
         }
 
         .avatar {
             font-size: 4.5rem;
-            margin-bottom: 8px;
-            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            line-height: 1;
+            filter: grayscale(100%) contrast(200%); /* Gives emojis an old liquid-crystal aesthetic override */
+            opacity: 0.85;
+            transition: transform 0.15s steps(4); /* Chappy low frame-rate animation feel */
         }
 
-        .status-text {
-            font-size: 0.95rem;
-            font-weight: bold;
-            color: #fff;
-            text-align: center;
-            padding: 0 10px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .stat-box {
-            background-color: #1d1d21;
-            padding: 8px 12px;
-            border-radius: 8px;
-            border-left: 4px solid #ccff00;
-        }
-
-        .stat-box.toxic-profile {
-            border-left-color: #ff3b30;
-        }
-
-        .stat-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            color: #71717a;
-            margin-bottom: 2px;
-        }
-
-        .stat-value {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #fff;
-        }
-
-        .panel-title {
+        .status-marquee {
+            margin-top: 8px;
             font-size: 0.75rem;
-            text-transform: uppercase;
-            color: #a1a1aa;
-            margin-bottom: 6px;
-            letter-spacing: 0.5px;
+            font-weight: bold;
+            text-align: center;
+            min-height: 24px;
+            max-width: 100%;
+            word-wrap: break-word;
         }
 
-        .action-block {
+        /* Hardware Metrics Grid - LCD Text style */
+        .telemetry-board {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .shop-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 6px;
-            flex: 1;
-            overflow-y: auto;
-            padding-right: 2px;
-            margin-bottom: 12px;
-        }
-
-        button {
-            background-color: #ccff00;
-            color: #141416;
-            border: none;
-            padding: 12px;
-            font-size: 0.85rem;
+            gap: 4px;
+            font-size: 0.75rem;
             font-weight: bold;
-            border-radius: 8px;
-            text-transform: uppercase;
-            cursor: pointer;
-            box-shadow: 0 4px #99cc00;
-            transition: transform 0.05s, box-shadow 0.05s;
+            border-top: 1px dashed #1c201a;
+            padding-top: 6px;
         }
 
-        button:active {
-            transform: translateY(4px);
-            box-shadow: 0 0px #99cc00;
-        }
-
-        button:disabled {
-            background-color: #27272a;
-            color: #52525b;
-            box-shadow: none;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        button.job-btn {
-            background-color: #e4e4e7;
-            box-shadow: 0 4px #a1a1aa;
-        }
-        button.job-btn:active { box-shadow: 0 0px #a1a1aa; }
-
-        button.sleep-btn {
-            background-color: #00e5ff;
-            box-shadow: 0 4px #00a8cc;
-        }
-        button.sleep-btn:active { box-shadow: 0 0px #00a8cc; }
-        button.sleep-btn.sleeping {
-            background-color: #ff3b30;
-            color: #fff;
-            box-shadow: 0 4px #b3241c;
-        }
-
-        .shop-item-btn {
-            background-color: #27272a;
-            color: #fff;
-            box-shadow: 0 3px #18181b;
+        .telemetry-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 10px 14px;
-            text-align: left;
-        }
-        .shop-item-btn:active { box-shadow: 0 0px #18181b; }
-        .shop-item-btn .item-meta {
-            font-size: 0.65rem;
-            color: #a1a1aa;
-            text-transform: none;
-            font-weight: normal;
-            margin-top: 2px;
-        }
-        .shop-item-btn .item-cost {
-            color: #ccff00;
-            font-size: 1rem;
-        }
-        .shop-item-btn.chemical-hazard .item-cost {
-            color: #ff453a;
         }
 
+        /* Tactile Plastic Button Layout Controls */
+        .physical-keypad {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            padding-top: 16px;
+        }
+
+        .pad-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Turning UI components into physical buttons */
+        button.rubber-key {
+            background: #ffcc00;
+            color: #222;
+            font-family: inherit;
+            border: 3px solid #b38f00;
+            border-radius: 20px; /* Soft round handheld keys style */
+            padding: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #806600, 0 8px 10px rgba(0,0,0,0.3);
+            position: relative;
+            transition: none;
+        }
+
+        button.rubber-key:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #806600, 0 3px 5px rgba(0,0,0,0.3);
+        }
+
+        button.rubber-key:disabled {
+            background: #cdbf96 !important;
+            color: #928768 !important;
+            border-color: #928768 !important;
+            box-shadow: 0 2px 0 #5f5843 !important;
+            transform: translateY(3px);
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Custom Colors for specialized utility keys */
+        button.key-danger {
+            background: #ff453a;
+            border-color: #b3241c;
+            color: white;
+            box-shadow: 0 5px 0 #801a14, 0 8px 10px rgba(0,0,0,0.3);
+        }
+        button.key-danger:active { box-shadow: 0 2px 0 #801a14; }
+
+        button.key-utility {
+            background: #00e5ff;
+            border-color: #00a8cc;
+            box-shadow: 0 5px 0 #00667c, 0 8px 10px rgba(0,0,0,0.3);
+        }
+        button.key-utility:active { box-shadow: 0 2px 0 #00667c; }
+
+        button.key-utility.active-stasis {
+            background: #34c759;
+            border-color: #248a3d;
+            box-shadow: 0 5px 0 #144d22;
+        }
+
+        /* Hardwired Component Reset Panel overlay */
         .death-screen {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(10, 10, 11, 0.98);
+            top: 12px; left: 12px; right: 12px; bottom: 12px;
+            background-color: #121510;
+            color: #ff3b30;
+            border-radius: 4px;
             display: none;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
-            z-index: 20;
-            padding: 24px;
+            z-index: 30;
+            padding: 16px;
             text-align: center;
         }
 
         .death-screen h2 {
-            color: #ff3b30;
-            font-size: 2.2rem;
-            margin-bottom: 12px;
-            letter-spacing: 1px;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
         }
 
         .death-screen p {
-            margin-bottom: 24px;
-            line-height: 1.5;
-            color: #d4d4d8;
+            color: #a3b899;
+            font-size: 0.75rem;
+            margin-bottom: 20px;
+            line-height: 1.4;
         }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <div class="death-screen" id="deathScreen">
-            <h2>CRITICAL FAILURE</h2>
-            <p id="deathReason">Your bodybuilder passed away.</p>
-            <button onclick="resetGame()" style="width: 60%;">Respawn Lifter</button>
-        </div>
+    <!-- Electronic Plastic Housing Case Frame -->
+    <div class="hardware-shell">
+        <div class="brand-stamp">★ SWOLEGOTCHI ★</div>
 
-        <header>
-            <h1>Swole-gotchi: Lab Edition</h1>
-        </header>
+        <!-- Integrated Virtual LCD Sub-Assembly System -->
+        <div class="lcd-screen">
+            
+            <!-- Structural Safety Screen Overlays -->
+            <div class="death-screen" id="deathScreen">
+                <h2>[SYSTEM HALT]</h2>
+                <p id="deathReason">Hardware breakdown sequence initialized.</p>
+                <button class="rubber-key key-danger" onclick="resetGame()" style="width: 80%; margin: 0 auto;">MASTER RESET</button>
+            </div>
 
-        <div class="display-panel">
-            <div class="avatar" id="avatar">💪</div>
-            <div class="status-text" id="statusText">System Diagnostic: Green</div>
-        </div>
+            <div class="lcd-header">
+                <div>SYS: ONLINE</div>
+                <div id="lcdClock">T+000s</div>
+            </div>
 
-        <div class="stats-grid">
-            <div class="stat-box">
-                <div class="stat-label">Muscle Mass</div>
-                <div class="stat-value" id="statMuscle">10</div>
+            <!-- Dynamic Micro-Grid Visual Frame Vector -->
+            <div class="avatar-zone">
+                <div class="avatar" id="avatar">💪</div>
+                <div class="status-marquee" id="statusText">DIAGNOSTIC: SUCCESS</div>
             </div>
-            <div class="stat-box">
-                <div class="stat-label">Liquidity (Cash)</div>
-                <div class="stat-value" id="statCash">$10</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">Gastro Fullness</div>
-                <div class="stat-value" id="statFullness">100/100</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">Neural Energy</div>
-                <div class="stat-value" id="statEnergy">100/100</div>
-            </div>
-            <div class="stat-box toxic-profile" style="grid-column: span 2;">
-                <div class="stat-label">Systemic Toxicity (Hepatic/Cardio Strain)</div>
-                <div class="stat-value" id="statToxicity">0/100</div>
-            </div>
-        </div>
 
-        <div class="panel-title">Operations</div>
-        <div class="action-block">
-            <button id="btnTrain" onclick="executeWorkout()">🏋️ Pump Iron</button>
-            <button id="btnJob" class="job-btn" onclick="executeJobShift()">💼 Grind Shift</button>
-        </div>
-
-        <div class="panel-title">Nutrition & Chemistry Shop</div>
-        <div class="shop-grid">
-            <button id="btnBuyFood" class="shop-item-btn" onclick="purchaseConsumable('food')">
-                <div>
-                    <div>🍗 Chicken & Rice Meals</div>
-                    <div class="item-meta">Fullness +35 | Toxicity 0</div>
+            <!-- Numeric Telemetry Array Matrix readout layout -->
+            <div class="telemetry-board">
+                <div class="telemetry-row"><span>MUSCLE:</span><span id="statMuscle">10</span></div>
+                <div class="telemetry-row"><span>CASH:</span><span id="statCash">$20</span></div>
+                <div class="telemetry-row"><span>HUNGER:</span><span id="statFullness">100</span></div>
+                <div class="telemetry-row"><span>ENERGY:</span><span id="statEnergy">100</span></div>
+                <div class="telemetry-row" style="grid-column: span 2;">
+                    <span>TOXICITY STRAIN:</span><span id="statToxicity">0%</span>
                 </div>
-                <div class="item-cost">$8</div>
-            </button>
-
-            <button id="btnBuyProtein" class="shop-item-btn" onclick="purchaseConsumable('protein')">
-                <div>
-                    <div>🥤 Pure Whey Isolate</div>
-                    <div class="item-meta">Permanently adds +1 Muscle per workout loop</div>
-                </div>
-                <div class="item-cost">$25</div>
-            </button>
-
-            <button id="btnBuyPre" class="shop-item-btn" onclick="purchaseConsumable('preworkout')">
-                <div>
-                    <div>⚡ High-Stim Pre-Workout</div>
-                    <div class="item-meta">Energy +40 | Toxicity +12</div>
-                </div>
-                <div class="item-cost">$15</div>
-            </button>
-
-            <button id="btnBuySauce" class="shop-item-btn chemical-hazard" onclick="purchaseConsumable('steroids')">
-                <div>
-                    <div>🧪 The "Secret Sauce" (Anabolics)</div>
-                    <div class="item-meta">Muscle Mass +35 | Toxicity +38</div>
-                </div>
-                <div class="item-cost">$60</div>
-            </button>
+            </div>
         </div>
 
-        <button id="btnSleep" class="sleep-btn" onclick="toggleSleepState()">💤 Enter Stasis (Sleep)</button>
+        <!-- Outer Interactive Membrane Control Panel Matrix -->
+        <div class="physical-keypad">
+            <div class="pad-row">
+                <button id="btnTrain" class="rubber-key" onclick="executeWorkout()">🏋️ WORKOUT</button>
+                <button id="btnJob" class="rubber-key" onclick="executeJobShift()">💼 DAY JOB</button>
+            </div>
+
+            <div class="pad-row">
+                <button id="btnBuyFood" class="rubber-key" onclick="purchaseConsumable('food')">🍗 FOOD ($8)</button>
+                <button id="btnBuyProtein" class="rubber-key" onclick="purchaseConsumable('protein')">🥤 WHEY ($25)</button>
+            </div>
+
+            <div class="pad-row">
+                <button id="btnBuyPre" class="rubber-key" onclick="purchaseConsumable('preworkout')">⚡ PRE ($15)</button>
+                <button id="btnBuySauce" class="rubber-key key-danger" onclick="purchaseConsumable('steroids')">🧪 GEAR ($60)</button>
+            </div>
+
+            <button id="btnSleep" class="rubber-key key-utility" onclick="toggleSleepState()">💤 SLEEP STASIS</button>
+        </div>
     </div>
 
     <script>
+        // Execution State Variables
         let state = {
             muscle: 10,
             cash: 20, 
@@ -329,7 +303,8 @@
             proteinUpgrades: 0, 
             isSleeping: false,
             isDead: false,
-            starvationTicks: 0
+            starvationTicks: 0,
+            elapsedSeconds: 0
         };
 
         const CAPACITIES = { maxFullness: 100, maxEnergy: 100, fatalToxicity: 100 };
@@ -345,13 +320,14 @@
                 proteinUpgrades: 0,
                 isSleeping: false,
                 isDead: false,
-                starvationTicks: 0
+                starvationTicks: 0,
+                elapsedSeconds: 0
             };
             
             document.getElementById('deathScreen').style.display = 'none';
             const sleepBtn = document.getElementById('btnSleep');
-            sleepBtn.innerText = "💤 Enter Stasis (Sleep)";
-            sleepBtn.className = "sleep-btn";
+            sleepBtn.innerText = "💤 SLEEP STASIS";
+            sleepBtn.className = "rubber-key key-utility";
             
             renderInterface();
             
@@ -361,6 +337,9 @@
 
         function processSystemTick() {
             if (state.isDead) return;
+
+            state.elapsedSeconds++;
+            document.getElementById('lcdClock').innerText = `T+${String(state.elapsedSeconds).padStart(3, '0')}s`;
 
             if (state.isSleeping) {
                 state.energy = Math.min(CAPACITIES.maxEnergy, state.energy + 10);
@@ -376,14 +355,14 @@
                 state.muscle = Math.max(0, state.muscle - 1.5);
                 state.starvationTicks++;
                 if (state.starvationTicks >= 12) {
-                    executeKillSequence("Biological Shutdown: Heart muscle catabolized due to total starvation.");
+                    executeKillSequence("FATAL ERROR: METABOLIC COLLAPSE FROM TOTAL STARVATION.");
                 }
             } else {
                 state.starvationTicks = 0;
             }
 
             if (state.toxicity >= CAPACITIES.fatalToxicity) {
-                executeKillSequence("Organ System Collapse: Hepatic/Cardio toxicity metrics exceeded safe human limitations (100%).");
+                executeKillSequence("FATAL ERROR: HEPATIC/CARDIO TOXICITY OVERLOAD DETECTED.");
             }
 
             renderInterface();
@@ -393,10 +372,7 @@
             if (state.energy < 25 || state.fullness < 20 || state.isSleeping) return;
 
             let yieldCalculation = 4 + state.proteinUpgrades;
-            
-            if (state.toxicity > 75) {
-                yieldCalculation = yieldCalculation * 0.5;
-            }
+            if (state.toxicity > 75) yieldCalculation = yieldCalculation * 0.5;
 
             state.muscle += yieldCalculation;
             state.energy = Math.max(0, state.energy - 25);
@@ -421,11 +397,11 @@
             const sleepBtn = document.getElementById('btnSleep');
             
             if (state.isSleeping) {
-                sleepBtn.innerText = "☀️ Wake Up";
-                sleepBtn.classList.add('sleeping');
+                sleepBtn.innerText = "☀️ WAKE UP";
+                sleepBtn.classList.add('active-stasis');
             } else {
-                sleepBtn.innerText = "💤 Enter Stasis (Sleep)";
-                sleepBtn.classList.remove('sleeping');
+                sleepBtn.innerText = "💤 SLEEP STASIS";
+                sleepBtn.classList.remove('active-stasis');
             }
             renderInterface();
         }
@@ -465,16 +441,17 @@
         }
 
         function renderInterface() {
+            // LCD Screen Number Layout Outputs
             document.getElementById('statMuscle').innerText = Math.floor(state.muscle);
             document.getElementById('statCash').innerText = `$${state.cash}`;
-            document.getElementById('statFullness').innerText = `${Math.floor(state.fullness)}/${CAPACITIES.maxFullness}`;
-            document.getElementById('statEnergy').innerText = `${Math.floor(state.energy)}/${CAPACITIES.maxEnergy}`;
-            document.getElementById('statToxicity').innerText = `${Math.floor(state.toxicity)}/100`;
+            document.getElementById('statFullness').innerText = Math.floor(state.fullness);
+            document.getElementById('statEnergy').innerText = Math.floor(state.energy);
+            document.getElementById('statToxicity').innerText = `${Math.floor(state.toxicity)}%`;
 
+            // Operational Interlock Locks
             const activeLocks = state.isSleeping;
             document.getElementById('btnTrain').disabled = activeLocks || state.energy < 25 || state.fullness < 20;
             document.getElementById('btnJob').disabled = activeLocks || state.energy < 30;
-            
             document.getElementById('btnBuyFood').disabled = activeLocks || state.cash < 8 || state.fullness >= CAPACITIES.maxFullness;
             document.getElementById('btnBuyProtein').disabled = activeLocks || state.cash < 25;
             document.getElementById('btnBuyPre').disabled = activeLocks || state.cash < 15;
@@ -485,45 +462,39 @@
 
             if (state.isSleeping) {
                 avatarEl.innerText = "😴";
-                statusEl.innerText = "Stasis Mode Active: Flush Toxins & Recharging.";
-                statusEl.style.color = "#00e5ff";
+                statusEl.innerText = "[STASIS RECOVERY ACTIVE]";
                 return;
             }
 
+            // Morphological Layout Calculations
             if (state.muscle < 15) {
                 avatarEl.innerText = "🧍";
-                statusEl.style.color = "#ffffff";
-                statusEl.innerText = "Atrophied Frame. Lacks training baseline.";
+                statusEl.innerText = "WARN: UNDERSIZED FRAME";
             } else if (state.muscle >= 15 && state.muscle < 75) {
                 avatarEl.innerText = "💪";
-                statusEl.style.color = "#ffffff";
-                statusEl.innerText = "Gains verified. Frame stabilization normal.";
+                statusEl.innerText = "STATUS: GAINZ STABLE";
             } else if (state.muscle >= 75 && state.toxicity <= 50) {
                 avatarEl.innerText = "🏋️";
-                statusEl.style.color = "#ccff00";
-                statusEl.innerText = "Natural Elite Peak. Highly optimized.";
+                statusEl.innerText = "STATUS: ELITE POWER PACK";
             } else if (state.muscle >= 75 && state.toxicity > 50) {
                 avatarEl.innerText = "👹"; 
-                statusEl.style.color = "#ff453a";
-                statusEl.innerText = "WARNING: Mutant Mutation Profile Detected. Organic limits broken.";
+                statusEl.innerText = "CRIT: MUTANT ANOMALY";
             }
 
+            // Real-time Override Alerts
             if (state.toxicity > 75) {
-                statusEl.innerText = "☣️ CRITICAL TOXICITY: Organ Failure Impending. Recovery highly compromised.";
-                statusEl.style.color = "#ff3b30";
+                statusEl.innerText = "🚨 TOXIC OVERLOAD WARNING 🚨";
             } else if (state.fullness < 20) {
-                statusEl.innerText = "🚨 Starvation state initialized. Mass losing stability.";
-                statusEl.style.color = "#ff3b30";
+                statusEl.innerText = "🚨 CATABOLIC STARVATION DETECTED";
             } else if (state.energy < 20) {
-                statusEl.innerText = "Central Nervous System exhaustion detected.";
-                statusEl.style.color = "#ffaa00";
+                statusEl.innerText = "WARN: CNS EXHAUSTION";
             }
         }
 
         function animateDisplayAvatar() {
             const av = document.getElementById('avatar');
-            av.style.transform = 'scale(1.25) rotate(5deg)';
-            setTimeout(() => { av.style.transform = 'scale(1) rotate(0deg)'; }, 150);
+            av.style.transform = 'scale(1.2) rotate(-5deg)';
+            setTimeout(() => { av.style.transform = 'scale(1) rotate(0deg)'; }, 100);
         }
 
         function executeKillSequence(reason) {
