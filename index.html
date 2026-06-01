@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Swole-gotchi: Handheld Edition</title>
+    <title>Swole-gotchi: Phase 4 (Persistence & Events)</title>
     <style>
-        /* Base Reset & Hardware Framing */
+        /* Core Retro Architecture Reset */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -15,7 +15,7 @@
         }
 
         body {
-            font-family: 'Courier New', Courier, monospace; /* Retro computing typeface */
+            font-family: 'Courier New', Courier, monospace;
             background-color: #1a1a24;
             background-image: radial-gradient(#2c2c3e 20%, transparent 20%), radial-gradient(#2c2c3e 20%, transparent 20%);
             background-size: 16px 16px;
@@ -28,15 +28,15 @@
             overflow: hidden;
         }
 
-        /* The Physical Toy Shell */
+        /* Hot Neon Plastic Housing Frame */
         .hardware-shell {
             width: 100%;
             max-width: 420px;
             height: 98vh;
             max-height: 820px;
-            background: linear-gradient(135deg, #ff007f 0%, #ff0055 100%); /* Hot Translucent Neon Pink Shell */
+            background: linear-gradient(135deg, #ff007f 0%, #ff0055 100%);
             border: 8px solid #3a001a;
-            border-radius: 60px 60px 80px 80px; /* Classic teardrop toy mold contour */
+            border-radius: 60px 60px 80px 80px;
             box-shadow: inset -10px -10px 15px rgba(0,0,0,0.4), inset 10px 10px 15px rgba(255,255,255,0.3), 0 20px 35px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
@@ -44,7 +44,6 @@
             position: relative;
         }
 
-        /* Front Case Panel Branding printed on plastic */
         .brand-stamp {
             text-align: center;
             color: #ffd700;
@@ -56,41 +55,38 @@
             margin-bottom: 12px;
         }
 
-        /* Retro Dot-Matrix Virtual LCD Screen Container */
+        /* Passive Matrix Liquid-Crystal Display simulation window */
         .lcd-screen {
-            background-color: #a3b899; /* Classic passive olive greenish grey matrix window */
+            background-color: #a3b899;
             border: 12px solid #2d3329;
             border-radius: 12px;
             box-shadow: inset 4px 4px 10px rgba(0,0,0,0.5);
-            padding: 12px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             position: relative;
-            height: 340px;
+            height: 360px;
             color: #1c201a;
         }
 
-        /* Screen Glare Overlay effect */
         .lcd-screen::after {
             content: " ";
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 50%);
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 50%);
             pointer-events: none;
         }
 
-        /* Matrix Status Ticker */
         .lcd-header {
             display: flex;
             justify-content: space-between;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: bold;
             border-bottom: 1px dashed #1c201a;
             padding-bottom: 4px;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
-        /* Dedicated Micro-Grid for Living Avatar Display Zone */
         .avatar-zone {
             flex: 1;
             display: flex;
@@ -101,29 +97,35 @@
         }
 
         .avatar {
-            font-size: 4.5rem;
+            font-size: 4.2rem;
             line-height: 1;
-            filter: grayscale(100%) contrast(200%); /* Gives emojis an old liquid-crystal aesthetic override */
+            filter: grayscale(100%) contrast(200%);
             opacity: 0.85;
-            transition: transform 0.15s steps(4); /* Chappy low frame-rate animation feel */
+            transition: transform 0.15s steps(4);
         }
 
+        /* Phase 4 Live Broadcast Scrolling Matrix Alert Ticker */
         .status-marquee {
-            margin-top: 8px;
-            font-size: 0.75rem;
+            margin-top: 6px;
+            font-size: 0.72rem;
             font-weight: bold;
             text-align: center;
-            min-height: 24px;
+            min-height: 32px;
             max-width: 100%;
             word-wrap: break-word;
+            border: 1px dotted #1c201a;
+            padding: 2px 4px;
+            background-color: rgba(0,0,0,0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Hardware Metrics Grid - LCD Text style */
         .telemetry-board {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 4px;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: bold;
             border-top: 1px dashed #1c201a;
             padding-top: 6px;
@@ -134,36 +136,64 @@
             justify-content: space-between;
         }
 
-        /* Tactile Plastic Button Layout Controls */
+        /* Phase 4 Interactive Intercept Alert Modal box */
+        .event-overlay {
+            position: absolute;
+            top: 4px; left: 4px; right: 4px; bottom: 4px;
+            background-color: #a3b899;
+            border: 4px double #1c201a;
+            border-radius: 8px;
+            z-index: 15;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .event-title {
+            font-size: 0.85rem;
+            font-weight: 900;
+            border-bottom: 2px solid #1c201a;
+            padding-bottom: 2px;
+            text-transform: uppercase;
+        }
+
+        .event-desc {
+            font-size: 0.75rem;
+            margin: 10px 0;
+            line-height: 1.3;
+            font-weight: bold;
+        }
+
+        /* Outer Interactive Pad Matrix keys */
         .physical-keypad {
             flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: space-around;
-            padding-top: 16px;
+            padding-top: 12px;
         }
 
         .pad-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 16px;
         }
 
-        /* Turning UI components into physical buttons */
         button.rubber-key {
             background: #ffcc00;
             color: #222;
             font-family: inherit;
             border: 3px solid #b38f00;
-            border-radius: 20px; /* Soft round handheld keys style */
-            padding: 12px;
-            font-size: 0.75rem;
+            border-radius: 20px;
+            padding: 10px;
+            font-size: 0.72rem;
             font-weight: bold;
             text-transform: uppercase;
             cursor: pointer;
             box-shadow: 0 5px 0 #806600, 0 8px 10px rgba(0,0,0,0.3);
             position: relative;
-            transition: none;
         }
 
         button.rubber-key:active {
@@ -178,10 +208,8 @@
             box-shadow: 0 2px 0 #5f5843 !important;
             transform: translateY(3px);
             opacity: 0.6;
-            cursor: not-allowed;
         }
 
-        /* Custom Colors for specialized utility keys */
         button.key-danger {
             background: #ff453a;
             border-color: #b3241c;
@@ -196,17 +224,21 @@
             box-shadow: 0 5px 0 #00667c, 0 8px 10px rgba(0,0,0,0.3);
         }
         button.key-utility:active { box-shadow: 0 2px 0 #00667c; }
+        button.key-utility.active-stasis { background: #34c759; border-color: #248a3d; box-shadow: 0 5px 0 #144d22; }
 
-        button.key-utility.active-stasis {
-            background: #34c759;
-            border-color: #248a3d;
-            box-shadow: 0 5px 0 #144d22;
+        button.event-close-btn {
+            border-radius: 6px;
+            padding: 4px;
+            background: #1c201a;
+            color: #a3b899;
+            border: 1px solid #1c201a;
+            box-shadow: none !important;
+            transform: none !important;
         }
 
-        /* Hardwired Component Reset Panel overlay */
         .death-screen {
             position: absolute;
-            top: 12px; left: 12px; right: 12px; bottom: 12px;
+            top: 2px; left: 2px; right: 2px; bottom: 2px;
             background-color: #121510;
             color: #ff3b30;
             border-radius: 4px;
@@ -218,63 +250,55 @@
             text-align: center;
         }
 
-        .death-screen h2 {
-            font-size: 1.5rem;
-            margin-bottom: 8px;
-            letter-spacing: -1px;
-        }
-
-        .death-screen p {
-            color: #a3b899;
-            font-size: 0.75rem;
-            margin-bottom: 20px;
-            line-height: 1.4;
-        }
+        .death-screen h2 { font-size: 1.4rem; margin-bottom: 8px; }
+        .death-screen p { color: #a3b899; font-size: 0.72rem; margin-bottom: 16px; }
     </style>
 </head>
 <body>
 
-    <!-- Electronic Plastic Housing Case Frame -->
     <div class="hardware-shell">
-        <div class="brand-stamp">★ SWOLEGOTCHI ★</div>
+        <div class="brand-stamp">★ SWOLEGOTCHI V4 ★</div>
 
-        <!-- Integrated Virtual LCD Sub-Assembly System -->
         <div class="lcd-screen">
             
-            <!-- Structural Safety Screen Overlays -->
+            <!-- System Intercept Fatal Crash Overlay -->
             <div class="death-screen" id="deathScreen">
-                <h2>[SYSTEM HALT]</h2>
+                <h2>[CORE HALT]</h2>
                 <p id="deathReason">Hardware breakdown sequence initialized.</p>
-                <button class="rubber-key key-danger" onclick="resetGame()" style="width: 80%; margin: 0 auto;">MASTER RESET</button>
+                <button class="rubber-key key-danger" onclick="clearSaveAndReset()" style="width: 80%; margin: 0 auto;">FACTORY RESET</button>
+            </div>
+
+            <!-- Dynamic Live Event Modal Frame Window -->
+            <div class="event-overlay" id="eventOverlay">
+                <div class="event-title" id="eventTitle">INTERRUPT</div>
+                <div class="event-desc" id="eventDesc">A random occurrence has changed your telemetry status.</div>
+                <button class="event-close-btn" onclick="dismissEvent()">[DISMISS OVERRIDE]</button>
             </div>
 
             <div class="lcd-header">
-                <div>SYS: ONLINE</div>
+                <div id="lcdSaveNotice">SYS: AUTO_OK</div>
                 <div id="lcdClock">T+000s</div>
             </div>
 
-            <!-- Dynamic Micro-Grid Visual Frame Vector -->
             <div class="avatar-zone">
                 <div class="avatar" id="avatar">💪</div>
-                <div class="status-marquee" id="statusText">DIAGNOSTIC: SUCCESS</div>
+                <div class="status-marquee" id="statusText">BOOTING KERNEL SYSTEM...</div>
             </div>
 
-            <!-- Numeric Telemetry Array Matrix readout layout -->
             <div class="telemetry-board">
                 <div class="telemetry-row"><span>MUSCLE:</span><span id="statMuscle">10</span></div>
                 <div class="telemetry-row"><span>CASH:</span><span id="statCash">$20</span></div>
                 <div class="telemetry-row"><span>HUNGER:</span><span id="statFullness">100</span></div>
                 <div class="telemetry-row"><span>ENERGY:</span><span id="statEnergy">100</span></div>
                 <div class="telemetry-row" style="grid-column: span 2;">
-                    <span>TOXICITY STRAIN:</span><span id="statToxicity">0%</span>
+                    <span>TOXIC STRAIN:</span><span id="statToxicity">0%</span>
                 </div>
             </div>
         </div>
 
-        <!-- Outer Interactive Membrane Control Panel Matrix -->
         <div class="physical-keypad">
             <div class="pad-row">
-                <button id="btnTrain" class="rubber-key" onclick="executeWorkout()">🏋️ WORKOUT</button>
+                <button id="btnTrain" class="rubber-key" onclick="executeWorkout()"> WORKOUT</button>
                 <button id="btnJob" class="rubber-key" onclick="executeJobShift()">💼 DAY JOB</button>
             </div>
 
@@ -293,7 +317,7 @@
     </div>
 
     <script>
-        // Execution State Variables
+        // Core State Engine Vector
         let state = {
             muscle: 10,
             cash: 20, 
@@ -304,27 +328,42 @@
             isSleeping: false,
             isDead: false,
             starvationTicks: 0,
-            elapsedSeconds: 0
+            elapsedSeconds: 0,
+            lastSavedTimestamp: 0
         };
 
         const CAPACITIES = { maxFullness: 100, maxEnergy: 100, fatalToxicity: 100 };
         let executionInterval;
+        let eventActive = false;
 
         function initGame() {
-            state = {
-                muscle: 10,
-                cash: 20,
-                fullness: 100,
-                energy: 100,
-                toxicity: 0,
-                proteinUpgrades: 0,
-                isSleeping: false,
-                isDead: false,
-                starvationTicks: 0,
-                elapsedSeconds: 0
-            };
+            // Attempt to fetch local storage profile
+            const savedData = localStorage.getItem('swolegotchi_v4_save');
+            
+            if (savedData) {
+                try {
+                    const parsed = JSON.parse(savedData);
+                    state = parsed;
+                    
+                    // Recover from sleeping block locks safely if user crashed page
+                    state.isSleeping = false;
+                    
+                    // Core Mechanic: Calculate Time Away Decay Loop
+                    const timeDifferenceSeconds = Math.floor((Date.now() - state.lastSavedTimestamp) / 1000);
+                    if (timeDifferenceSeconds > 5 && !state.isDead) {
+                        processOfflineDecay(timeDifferenceSeconds);
+                    }
+                } catch(e) {
+                    clearStateToDefault();
+                }
+            } else {
+                clearStateToDefault();
+            }
             
             document.getElementById('deathScreen').style.display = 'none';
+            document.getElementById('eventOverlay').style.display = 'none';
+            eventActive = false;
+            
             const sleepBtn = document.getElementById('btnSleep');
             sleepBtn.innerText = "💤 SLEEP STASIS";
             sleepBtn.className = "rubber-key key-utility";
@@ -335,12 +374,46 @@
             executionInterval = setInterval(processSystemTick, 1000);
         }
 
+        function clearStateToDefault() {
+            state = { muscle: 10, cash: 20, fullness: 100, energy: 100, toxicity: 0, proteinUpgrades: 0, isSleeping: false, isDead: false, starvationTicks: 0, elapsedSeconds: 0, lastSavedTimestamp: Date.now() };
+        }
+
+        // Offline time engine calculations
+        function processOfflineDecay(secondsAway) {
+            // Cap calculations at a maximum of 6 hours to prevent massive sudden instadeath spikes without gameplay interaction
+            const boundedSeconds = Math.min(secondsAway, 21600); 
+            
+            // Apply slower passive time away decay coefficient numbers
+            const hungerLoss = boundedSeconds * 0.4;
+            const energyLoss = boundedSeconds * 0.2;
+            const toxicityClearing = boundedSeconds * 0.5;
+
+            state.fullness = Math.max(0, state.fullness - hungerLoss);
+            state.energy = Math.max(0, state.energy - energyLoss);
+            state.toxicity = Math.max(0, state.toxicity - toxicityClearing);
+
+            // If the user left him completely starved while gone, degrade core tissue
+            if (state.fullness <= 0) {
+                const structuralLoss = Math.floor(boundedSeconds * 0.05);
+                state.muscle = Math.max(5, state.muscle - structuralLoss);
+                
+                // If away for an extreme duration with zero food reserves, trigger expiration script
+                if (boundedSeconds > 3600) {
+                    executeKillSequence("BIOLOGICAL FAILURE: Lifter expired due to complete neglect while system was unmonitored.");
+                }
+            }
+            
+            alert(`Away Diagnostics: You were gone for ${Math.floor(secondsAway/60)}m. Hunger increased, body parameters adjusted.`);
+        }
+
+        // Process System Loop - 1Hz Frequency Tick
         function processSystemTick() {
             if (state.isDead) return;
 
             state.elapsedSeconds++;
             document.getElementById('lcdClock').innerText = `T+${String(state.elapsedSeconds).padStart(3, '0')}s`;
 
+            // Standard real-time loop updates
             if (state.isSleeping) {
                 state.energy = Math.min(CAPACITIES.maxEnergy, state.energy + 10);
                 state.fullness = Math.max(0, state.fullness - 0.75); 
@@ -351,11 +424,13 @@
                 state.toxicity = Math.max(0, state.toxicity - 0.75); 
             }
 
+            // Real-time boundary limits failure hooks
             if (state.fullness <= 0) {
                 state.muscle = Math.max(0, state.muscle - 1.5);
                 state.starvationTicks++;
                 if (state.starvationTicks >= 12) {
                     executeKillSequence("FATAL ERROR: METABOLIC COLLAPSE FROM TOTAL STARVATION.");
+                    return;
                 }
             } else {
                 state.starvationTicks = 0;
@@ -363,13 +438,94 @@
 
             if (state.toxicity >= CAPACITIES.fatalToxicity) {
                 executeKillSequence("FATAL ERROR: HEPATIC/CARDIO TOXICITY OVERLOAD DETECTED.");
+                return;
+            }
+
+            // Auto-Save Registry Loop Matrix every 5 cycles
+            if (state.elapsedSeconds % 5 === 0) {
+                commitSaveFile();
+            }
+
+            // Phase 4: Hardware Interrupt Array Engine Engine (Random Incidents)
+            if (state.elapsedSeconds % 20 === 0 && !state.isSleeping && !eventActive) {
+                if (Math.random() <= 0.25) {
+                    triggerRandomIncident();
+                }
             }
 
             renderInterface();
         }
 
+        // Phase 4 Event Processing Matrix
+        function triggerRandomIncident() {
+            eventActive = true;
+            const overlay = document.getElementById('eventOverlay');
+            const title = document.getElementById('eventTitle');
+            const desc = document.getElementById('eventDesc');
+
+            const eventPool = [
+                {
+                    title: "💪 SPONSOR DEAL",
+                    desc: "An underground energy drink company noticed your gains. Payout: +$50 Cash.",
+                    action: () => { state.cash += 50; }
+                },
+                {
+                    title: "⚠️ PECTORAL TEAR",
+                    desc: "Your ego lifting backfired. Dropped bar. Muscle Mass -10, Energy -30.",
+                    action: () => { 
+                        state.muscle = Math.max(5, state.muscle - 10); 
+                        state.energy = Math.max(0, state.energy - 30); 
+                    }
+                },
+                {
+                    title: "🧪 RANDOM DRUG TEST",
+                    desc: "WADA officials knocked on your door unexpected. Penalty fine: -$30 Cash.",
+                    action: () => { state.cash = Math.max(0, state.cash - 30); }
+                },
+                {
+                    title: "☣️ BATCH CONTAMINATION",
+                    desc: "Your source sold you a cross-contaminated vial. Toxicity Strain instantly spikes +25%.",
+                    action: () => { state.toxicity = Math.min(100, state.toxicity + 25); }
+                }
+            ];
+
+            // Roll selected event indices
+            const selected = eventPool[Math.floor(Math.random() * eventPool.length)];
+            title.innerText = selected.title;
+            desc.innerText = selected.desc;
+            
+            // Execute state mutation change values immediately
+            selected.action();
+            
+            // Visual trigger display
+            overlay.style.display = 'flex';
+            commitSaveFile();
+        }
+
+        function dismissEvent() {
+            document.getElementById('eventOverlay').style.display = 'none';
+            eventActive = false;
+            renderInterface();
+        }
+
+        function commitSaveFile() {
+            if (state.isDead) return;
+            state.lastSavedTimestamp = Date.now();
+            localStorage.setItem('swolegotchi_v4_save', JSON.stringify(state));
+            
+            const notice = document.getElementById('lcdSaveNotice');
+            notice.innerText = "SYS: AUTO_SAVE";
+            setTimeout(() => { if(!state.isDead) notice.innerText = "SYS: AUTO_OK"; }, 800);
+        }
+
+        function clearSaveAndReset() {
+            localStorage.removeItem('swolegotchi_v4_save');
+            initGame();
+        }
+
+        // Core Actions Pipeline Mechanics
         function executeWorkout() {
-            if (state.energy < 25 || state.fullness < 20 || state.isSleeping) return;
+            if (state.energy < 25 || state.fullness < 20 || state.isSleeping || eventActive) return;
 
             let yieldCalculation = 4 + state.proteinUpgrades;
             if (state.toxicity > 75) yieldCalculation = yieldCalculation * 0.5;
@@ -383,7 +539,7 @@
         }
 
         function executeJobShift() {
-            if (state.energy < 30 || state.isSleeping) return;
+            if (state.energy < 30 || state.isSleeping || eventActive) return;
 
             state.cash += 35;
             state.energy = Math.max(0, state.energy - 30);
@@ -393,6 +549,7 @@
         }
 
         function toggleSleepState() {
+            if (eventActive) return;
             state.isSleeping = !state.isSleeping;
             const sleepBtn = document.getElementById('btnSleep');
             
@@ -407,7 +564,7 @@
         }
 
         function purchaseConsumable(type) {
-            if (state.isSleeping) return;
+            if (state.isSleeping || eventActive) return;
 
             switch(type) {
                 case 'food':
@@ -441,15 +598,13 @@
         }
 
         function renderInterface() {
-            // LCD Screen Number Layout Outputs
             document.getElementById('statMuscle').innerText = Math.floor(state.muscle);
             document.getElementById('statCash').innerText = `$${state.cash}`;
             document.getElementById('statFullness').innerText = Math.floor(state.fullness);
             document.getElementById('statEnergy').innerText = Math.floor(state.energy);
             document.getElementById('statToxicity').innerText = `${Math.floor(state.toxicity)}%`;
 
-            // Operational Interlock Locks
-            const activeLocks = state.isSleeping;
+            const activeLocks = state.isSleeping || eventActive;
             document.getElementById('btnTrain').disabled = activeLocks || state.energy < 25 || state.fullness < 20;
             document.getElementById('btnJob').disabled = activeLocks || state.energy < 30;
             document.getElementById('btnBuyFood').disabled = activeLocks || state.cash < 8 || state.fullness >= CAPACITIES.maxFullness;
@@ -466,7 +621,6 @@
                 return;
             }
 
-            // Morphological Layout Calculations
             if (state.muscle < 15) {
                 avatarEl.innerText = "🧍";
                 statusEl.innerText = "WARN: UNDERSIZED FRAME";
@@ -481,7 +635,6 @@
                 statusEl.innerText = "CRIT: MUTANT ANOMALY";
             }
 
-            // Real-time Override Alerts
             if (state.toxicity > 75) {
                 statusEl.innerText = "🚨 TOXIC OVERLOAD WARNING 🚨";
             } else if (state.fullness < 20) {
@@ -500,12 +653,9 @@
         function executeKillSequence(reason) {
             state.isDead = true;
             clearInterval(executionInterval);
+            localStorage.setItem('swolegotchi_v4_save', JSON.stringify(state)); // Lock death save
             document.getElementById('deathReason').innerText = reason;
             document.getElementById('deathScreen').style.display = 'flex';
-        }
-
-        function resetGame() {
-            initGame();
         }
 
         window.onload = initGame;
