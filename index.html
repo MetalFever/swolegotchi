@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Swole-gotchi: Responsive Shell</title>
+    <title>Swole-gotchi: Stable Kernel</title>
     <style>
         /* Core Retro Architecture Reset */
         * {
@@ -23,7 +23,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* svh ensures the layout perfectly snaps to mobile viewport changes, accounts for top/bottom system UI */
             height: 100vh;
             height: 100svh; 
             width: 100vw;
@@ -35,7 +34,6 @@
         .hardware-shell {
             width: 100%;
             max-width: 400px;
-            /* Dynamically scales based on small viewport calculations without overflowing headers or system tabs */
             height: 100%;
             max-height: 740px; 
             background: linear-gradient(135deg, #ff007f 0%, #ff0055 100%);
@@ -70,7 +68,6 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            /* Flexbasis scale ensures the monitor retains proper visual weight proportions regardless of screen height */
             flex: 1 1 280px; 
             min-height: 240px;
             color: #1c201a;
@@ -273,14 +270,12 @@
 
         <div class="lcd-screen">
             
-            <!-- System Intercept Fatal Crash Overlay -->
             <div class="death-screen" id="deathScreen">
                 <h2>[CORE HALT]</h2>
                 <p id="deathReason">Hardware breakdown sequence initialized.</p>
                 <button class="rubber-key key-danger" onclick="clearSaveAndReset()" style="width: 80%; margin: 0 auto;">FACTORY RESET</button>
             </div>
 
-            <!-- Dynamic Live Event Modal Frame Window -->
             <div class="event-overlay" id="eventOverlay">
                 <div class="event-title" id="eventTitle">INTERRUPT</div>
                 <div class="event-desc" id="eventDesc">A random occurrence has changed your telemetry status.</div>
@@ -331,7 +326,7 @@
     </div>
 
     <script>
-        // Core Defensively Protected State Layout
+        // Default Clean Global Layout
         let state = {
             muscle: 10,
             cash: 20, 
@@ -350,38 +345,55 @@
         let executionInterval;
         let eventActive = false;
 
+        // Fully Fortified Error-Immune Loader
         function initGame() {
-            const savedData = localStorage.getItem('swolegotchi_v4_save');
             let offlineMessage = "";
             
-            if (savedData) {
-                try {
+            try {
+                const savedData = localStorage.getItem('swolegotchi_v4_save');
+                if (savedData) {
                     const parsed = JSON.parse(savedData);
                     
-                    state.muscle = typeof parsed.muscle === 'number' ? parsed.muscle : 10;
-                    state.cash = typeof parsed.cash === 'number' ? parsed.cash : 20;
-                    state.fullness = typeof parsed.fullness === 'number' ? parsed.fullness : 100;
-                    state.energy = typeof parsed.energy === 'number' ? parsed.energy : 100;
-                    state.toxicity = typeof parsed.toxicity === 'number' ? parsed.toxicity : 0;
-                    state.proteinUpgrades = typeof parsed.proteinUpgrades === 'number' ? parsed.proteinUpgrades : 0;
-                    state.isDead = typeof parsed.isDead === 'boolean' ? parsed.isDead : false;
-                    state.starvationTicks = typeof parsed.starvationTicks === 'number' ? parsed.starvationTicks : 0;
-                    state.elapsedSeconds = typeof parsed.elapsedSeconds === 'number' ? parsed.elapsedSeconds : 0;
-                    state.lastSavedTimestamp = typeof parsed.lastSavedTimestamp === 'number' ? parsed.lastSavedTimestamp : Date.now();
-                    
-                    state.isSleeping = false;
-                    
-                    const timeDifferenceSeconds = Math.floor((Date.now() - state.lastSavedTimestamp) / 1000);
-                    if (timeDifferenceSeconds > 10 && !state.isDead) {
-                        offlineMessage = processOfflineDecay(timeDifferenceSeconds);
+                    if (parsed && typeof parsed === 'object') {
+                        // Strict data sanitization and forced number conversion
+                        state.muscle = (!isNaN(parsed.muscle) && parsed.muscle !== null) ? Math.max(0, Number(parsed.muscle)) : 10;
+                        state.cash = (!isNaN(parsed.cash) && parsed.cash !== null) ? Math.max(0, Number(parsed.cash)) : 20;
+                        state.fullness = (!isNaN(parsed.fullness) && parsed.fullness !== null) ? Math.max(0, Number(parsed.fullness)) : 100;
+                        state.energy = (!isNaN(parsed.energy) && parsed.energy !== null) ? Math.max(0, Number(parsed.energy)) : 100;
+                        state.toxicity = (!isNaN(parsed.toxicity) && parsed.toxicity !== null) ? Math.max(0, Number(parsed.toxicity)) : 0;
+                        state.proteinUpgrades = (!isNaN(parsed.proteinUpgrades) && parsed.proteinUpgrades !== null) ? Math.max(0, Number(parsed.proteinUpgrades)) : 0;
+                        state.starvationTicks = (!isNaN(parsed.starvationTicks) && parsed.starvationTicks !== null) ? Math.max(0, Number(parsed.starvationTicks)) : 0;
+                        state.elapsedSeconds = (!isNaN(parsed.elapsedSeconds) && parsed.elapsedSeconds !== null) ? Math.max(0, Number(parsed.elapsedSeconds)) : 0;
+                        state.lastSavedTimestamp = (!isNaN(parsed.lastSavedTimestamp) && parsed.lastSavedTimestamp !== null) ? Number(parsed.lastSavedTimestamp) : Date.now();
+                        
+                        state.isDead = typeof parsed.isDead === 'boolean' ? parsed.isDead : false;
+                    } else {
+                        clearStateToDefault();
                     }
-                } catch(e) {
+                } else {
                     clearStateToDefault();
                 }
-            } else {
+
+                // Double check for sneaky NaN leaks before allowing clock loops to spin
+                if (isNaN(state.muscle) || isNaN(state.elapsedSeconds) || state.elapsedSeconds === null) {
+                    clearStateToDefault();
+                }
+
+                state.isSleeping = false; // Never start game locked inside stasis
+
+                // Process safe time away decay calculations
+                const timeDifferenceSeconds = Math.floor((Date.now() - state.lastSavedTimestamp) / 1000);
+                if (timeDifferenceSeconds > 10 && !state.isDead) {
+                    offlineMessage = processOfflineDecay(timeDifferenceSeconds);
+                }
+
+            } catch (error) {
+                // Fail-safe protection: if anything crashes, wipe clean instead of bricking the device
+                console.warn("Kernel boot error intercepted. Restoring default profile.");
                 clearStateToDefault();
             }
             
+            // Re-render UI elements safely
             document.getElementById('deathScreen').style.display = 'none';
             document.getElementById('eventOverlay').style.display = 'none';
             eventActive = false;
@@ -394,8 +406,11 @@
             
             if (offlineMessage) {
                 document.getElementById('statusText').innerText = offlineMessage;
+            } else {
+                document.getElementById('statusText').innerText = "STATUS: GAINZ STABLE";
             }
             
+            // Launch main system clock
             if (executionInterval) clearInterval(executionInterval);
             executionInterval = setInterval(processSystemTick, 1000);
         }
@@ -523,7 +538,7 @@
             state.lastSavedTimestamp = Date.now();
             localStorage.setItem('swolegotchi_v4_save', JSON.stringify(state));
             
-         const notice = document.getElementById('lcdSaveNotice');
+            const notice = document.getElementById('lcdSaveNotice');
             notice.innerText = "SYS: AUTO_SAVE";
             setTimeout(() => { if(!state.isDead) notice.innerText = "SYS: AUTO_OK"; }, 800);
         }
