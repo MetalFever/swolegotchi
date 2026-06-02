@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Swole-gotchi: Stable Kernel</title>
+    <title>Swole-gotchi: Stable Engine Build</title>
     <style>
         /* Core Retro Architecture Reset */
         * {
@@ -326,7 +326,7 @@
     </div>
 
     <script>
-        // Default Clean Global Layout
+        // Default Core Game State Container
         let state = {
             muscle: 10,
             cash: 20, 
@@ -345,7 +345,6 @@
         let executionInterval;
         let eventActive = false;
 
-        // Fully Fortified Error-Immune Loader
         function initGame() {
             let offlineMessage = "";
             
@@ -355,7 +354,6 @@
                     const parsed = JSON.parse(savedData);
                     
                     if (parsed && typeof parsed === 'object') {
-                        // Strict data sanitization and forced number conversion
                         state.muscle = (!isNaN(parsed.muscle) && parsed.muscle !== null) ? Math.max(0, Number(parsed.muscle)) : 10;
                         state.cash = (!isNaN(parsed.cash) && parsed.cash !== null) ? Math.max(0, Number(parsed.cash)) : 20;
                         state.fullness = (!isNaN(parsed.fullness) && parsed.fullness !== null) ? Math.max(0, Number(parsed.fullness)) : 100;
@@ -374,26 +372,29 @@
                     clearStateToDefault();
                 }
 
-                // Double check for sneaky NaN leaks before allowing clock loops to spin
-                if (isNaN(state.muscle) || isNaN(state.elapsedSeconds) || state.elapsedSeconds === null) {
+                if (isNaN(state.muscle) || isNaN(state.elapsedSeconds)) {
                     clearStateToDefault();
                 }
 
-                state.isSleeping = false; // Never start game locked inside stasis
+                state.isSleeping = false; 
 
-                // Process safe time away decay calculations
+                // Process time away allocations
                 const timeDifferenceSeconds = Math.floor((Date.now() - state.lastSavedTimestamp) / 1000);
                 if (timeDifferenceSeconds > 10 && !state.isDead) {
                     offlineMessage = processOfflineDecay(timeDifferenceSeconds);
                 }
 
             } catch (error) {
-                // Fail-safe protection: if anything crashes, wipe clean instead of bricking the device
-                console.warn("Kernel boot error intercepted. Restoring default profile.");
                 clearStateToDefault();
             }
             
-            // Re-render UI elements safely
+            // CRITICAL FIX: If the offline decay killed the pet, halt boot initialization immediately
+            if (state.isDead) {
+                if (executionInterval) clearInterval(executionInterval);
+                return; 
+            }
+            
+            // Clean interface slate reset
             document.getElementById('deathScreen').style.display = 'none';
             document.getElementById('eventOverlay').style.display = 'none';
             eventActive = false;
@@ -410,7 +411,7 @@
                 document.getElementById('statusText').innerText = "STATUS: GAINZ STABLE";
             }
             
-            // Launch main system clock
+            // Launch clean running clock
             if (executionInterval) clearInterval(executionInterval);
             executionInterval = setInterval(processSystemTick, 1000);
         }
@@ -432,8 +433,10 @@
 
             if (state.fullness <= 0) {
                 const structuralLoss = Math.floor(boundedSeconds * 0.02);
-                state.muscle = Math.max(5, state.muscle - structuralLoss);
-                if (boundedSeconds > 7200) {
+                state.muscle = Math.max(0, state.muscle - structuralLoss);
+                
+                // If away for more than 40 mins with zero food, trigger direct execution screen
+                if (boundedSeconds > 2400 || state.muscle <= 0) {
                     executeKillSequence("BIOLOGICAL FAILURE: Expired from catabolic starvation while unmonitored.");
                     return "DIAGNOSTIC: METABOLIC HALT";
                 }
@@ -460,7 +463,7 @@
             if (state.fullness <= 0) {
                 state.muscle = Math.max(0, state.muscle - 1.0);
                 state.starvationTicks++;
-                if (state.starvationTicks >= 15) {
+                if (state.starvationTicks >= 15 || state.muscle <= 0) {
                     executeKillSequence("FATAL ERROR: METABOLIC COLLAPSE FROM TOTAL STARVATION.");
                     return;
                 }
@@ -502,8 +505,9 @@
                     title: "⚠️ PECTORAL TEAR",
                     desc: "Ego lifting backfired on the bench press. Muscle Mass -8, Energy -25.",
                     action: () => { 
-                        state.muscle = Math.max(5, state.muscle - 8); 
+                        state.muscle = Math.max(0, state.muscle - 8); 
                         state.energy = Math.max(0, state.energy - 25); 
+                        if(state.muscle <= 0) executeKillSequence("FATAL INJURY: Muscle tissue completely degenerated.");
                     }
                 },
                 {
@@ -676,10 +680,15 @@
 
         function executeKillSequence(reason) {
             state.isDead = true;
-            clearInterval(executionInterval);
+            if (executionInterval) clearInterval(executionInterval);
+            
+            // Instantly write the true dead state to local cache memory
             localStorage.setItem('swolegotchi_v4_save', JSON.stringify(state));
+            
+            // Pop open the interface blocker
             document.getElementById('deathReason').innerText = reason;
             document.getElementById('deathScreen').style.display = 'flex';
+            renderInterface();
         }
 
         window.onload = initGame;
