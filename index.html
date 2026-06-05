@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Swole-gotchi: Stable Engine Build</title>
+    <title>Swole-gotchi: Clean Boot Engine</title>
     <style>
         /* Core Retro Architecture Reset */
         * {
@@ -266,16 +266,18 @@
 <body>
 
     <div class="hardware-shell">
-        <div class="brand-stamp">★ SWOLEGOTCHI V4 ★</div>
+        <div class="brand-stamp">★ SWOLEGOTCHI V4.2 ★</div>
 
         <div class="lcd-screen">
             
+            <!-- System Intercept Fatal Crash Overlay -->
             <div class="death-screen" id="deathScreen">
                 <h2>[CORE HALT]</h2>
                 <p id="deathReason">Hardware breakdown sequence initialized.</p>
                 <button class="rubber-key key-danger" onclick="clearSaveAndReset()" style="width: 80%; margin: 0 auto;">FACTORY RESET</button>
             </div>
 
+            <!-- Dynamic Live Event Modal Frame Window -->
             <div class="event-overlay" id="eventOverlay">
                 <div class="event-title" id="eventTitle">INTERRUPT</div>
                 <div class="event-desc" id="eventDesc">A random occurrence has changed your telemetry status.</div>
@@ -297,9 +299,8 @@
                 <div class="telemetry-row"><span>CASH:</span><span id="statCash">$20</span></div>
                 <div class="telemetry-row"><span>HUNGER:</span><span id="statFullness">100</span></div>
                 <div class="telemetry-row"><span>ENERGY:</span><span id="statEnergy">100</span></div>
-                <div class="telemetry-row" style="grid-column: span 2;">
-                    <span>TOXIC STRAIN:</span><span id="statToxicity">0%</span>
-                </div>
+                <div class="telemetry-row"><span>FAT STRAIN:</span><span id="statFat">0%</span></div>
+                <div class="telemetry-row"><span>TOXICITY:</span><span id="statToxicity">0%</span></div>
             </div>
         </div>
 
@@ -326,12 +327,12 @@
     </div>
 
     <script>
-        // Default Core Game State Container
         let state = {
             muscle: 10,
             cash: 20, 
             fullness: 100,
             energy: 100,
+            fat: 0,
             toxicity: 0,
             proteinUpgrades: 0, 
             isSleeping: false,
@@ -341,8 +342,8 @@
             lastSavedTimestamp: 0
         };
 
-        const CAPACITIES = { maxFullness: 100, maxEnergy: 100, fatalToxicity: 100 };
-        let executionInterval;
+        const CAPACITIES = { maxFullness: 100, maxEnergy: 100, maxFat: 100, fatalToxicity: 100 };
+        let executionInterval = null;
         let eventActive = false;
 
         function initGame() {
@@ -358,12 +359,12 @@
                         state.cash = (!isNaN(parsed.cash) && parsed.cash !== null) ? Math.max(0, Number(parsed.cash)) : 20;
                         state.fullness = (!isNaN(parsed.fullness) && parsed.fullness !== null) ? Math.max(0, Number(parsed.fullness)) : 100;
                         state.energy = (!isNaN(parsed.energy) && parsed.energy !== null) ? Math.max(0, Number(parsed.energy)) : 100;
+                        state.fat = (!isNaN(parsed.fat) && parsed.fat !== null) ? Math.max(0, Number(parsed.fat)) : 0;
                         state.toxicity = (!isNaN(parsed.toxicity) && parsed.toxicity !== null) ? Math.max(0, Number(parsed.toxicity)) : 0;
                         state.proteinUpgrades = (!isNaN(parsed.proteinUpgrades) && parsed.proteinUpgrades !== null) ? Math.max(0, Number(parsed.proteinUpgrades)) : 0;
                         state.starvationTicks = (!isNaN(parsed.starvationTicks) && parsed.starvationTicks !== null) ? Math.max(0, Number(parsed.starvationTicks)) : 0;
                         state.elapsedSeconds = (!isNaN(parsed.elapsedSeconds) && parsed.elapsedSeconds !== null) ? Math.max(0, Number(parsed.elapsedSeconds)) : 0;
                         state.lastSavedTimestamp = (!isNaN(parsed.lastSavedTimestamp) && parsed.lastSavedTimestamp !== null) ? Number(parsed.lastSavedTimestamp) : Date.now();
-                        
                         state.isDead = typeof parsed.isDead === 'boolean' ? parsed.isDead : false;
                     } else {
                         clearStateToDefault();
@@ -378,7 +379,7 @@
 
                 state.isSleeping = false; 
 
-                // Process time away allocations
+                // Dynamic time away processing
                 const timeDifferenceSeconds = Math.floor((Date.now() - state.lastSavedTimestamp) / 1000);
                 if (timeDifferenceSeconds > 10 && !state.isDead) {
                     offlineMessage = processOfflineDecay(timeDifferenceSeconds);
@@ -388,13 +389,15 @@
                 clearStateToDefault();
             }
             
-            // CRITICAL FIX: If the offline decay killed the pet, halt boot initialization immediately
+            // CRITICAL SCREEN FORCE: If save file state says dead, snap layout down instantly
             if (state.isDead) {
                 if (executionInterval) clearInterval(executionInterval);
+                document.getElementById('deathReason').innerText = "SYSTEM INACTIVE: This lifter has expired.";
+                document.getElementById('deathScreen').style.display = 'flex';
+                renderInterface();
                 return; 
             }
             
-            // Clean interface slate reset
             document.getElementById('deathScreen').style.display = 'none';
             document.getElementById('eventOverlay').style.display = 'none';
             eventActive = false;
@@ -411,33 +414,31 @@
                 document.getElementById('statusText').innerText = "STATUS: GAINZ STABLE";
             }
             
-            // Launch clean running clock
             if (executionInterval) clearInterval(executionInterval);
             executionInterval = setInterval(processSystemTick, 1000);
         }
 
         function clearStateToDefault() {
-            state = { muscle: 10, cash: 20, fullness: 100, energy: 100, toxicity: 0, proteinUpgrades: 0, isSleeping: false, isDead: false, starvationTicks: 0, elapsedSeconds: 0, lastSavedTimestamp: Date.now() };
+            state = { muscle: 10, cash: 20, fullness: 100, energy: 100, fat: 0, toxicity: 0, proteinUpgrades: 0, isSleeping: false, isDead: false, starvationTicks: 0, elapsedSeconds: 0, lastSavedTimestamp: Date.now() };
         }
 
         function processOfflineDecay(secondsAway) {
             const boundedSeconds = Math.min(secondsAway, 21600); 
             
-            const hungerLoss = boundedSeconds * 0.15;
-            const energyLoss = boundedSeconds * 0.08;
-            const toxicityClearing = boundedSeconds * 0.3;
+            const hungerLoss = boundedSeconds * 0.08;
+            const energyLoss = boundedSeconds * 0.04;
+            const toxicityClearing = boundedSeconds * 0.2;
 
             state.fullness = Math.max(0, state.fullness - hungerLoss);
             state.energy = Math.max(0, state.energy - energyLoss);
             state.toxicity = Math.max(0, state.toxicity - toxicityClearing);
 
             if (state.fullness <= 0) {
-                const structuralLoss = Math.floor(boundedSeconds * 0.02);
+                const structuralLoss = Math.floor(boundedSeconds * 0.01);
                 state.muscle = Math.max(0, state.muscle - structuralLoss);
                 
-                // If away for more than 40 mins with zero food, trigger direct execution screen
-                if (boundedSeconds > 2400 || state.muscle <= 0) {
-                    executeKillSequence("BIOLOGICAL FAILURE: Expired from catabolic starvation while unmonitored.");
+                if (boundedSeconds > 4500 || state.muscle <= 0) {
+                    state.isDead = true;
                     return "DIAGNOSTIC: METABOLIC HALT";
                 }
             }
@@ -451,19 +452,23 @@
             document.getElementById('lcdClock').innerText = `T+${String(state.elapsedSeconds).padStart(3, '0')}s`;
 
             if (state.isSleeping) {
-                state.energy = Math.min(CAPACITIES.maxEnergy, state.energy + 8);
-                state.fullness = Math.max(0, state.fullness - 0.8); 
-                state.toxicity = Math.max(0, state.toxicity - 2.0); 
+                state.energy = Math.min(CAPACITIES.maxEnergy, state.energy + 4.0);
+                state.fullness = Math.max(0, state.fullness - 0.4);
+                state.toxicity = Math.max(0, state.toxicity - 1.2); 
             } else {
-                state.fullness = Math.max(0, state.fullness - 2.0);
-                state.energy = Math.max(0, state.energy - 1.2);
-                state.toxicity = Math.max(0, state.toxicity - 0.5); 
+                state.fullness = Math.max(0, state.fullness - 0.9);
+                state.energy = Math.max(0, state.energy - 0.6);
+                state.toxicity = Math.max(0, state.toxicity - 0.3); 
+            }
+
+            if (state.fat > 30 && !state.isSleeping) {
+                state.energy = Math.max(0, state.energy - 0.2);
             }
 
             if (state.fullness <= 0) {
-                state.muscle = Math.max(0, state.muscle - 1.0);
+                state.muscle = Math.max(0, state.muscle - 0.5);
                 state.starvationTicks++;
-                if (state.starvationTicks >= 15 || state.muscle <= 0) {
+                if (state.starvationTicks >= 30 || state.muscle <= 0) {
                     executeKillSequence("FATAL ERROR: METABOLIC COLLAPSE FROM TOTAL STARVATION.");
                     return;
                 }
@@ -481,7 +486,7 @@
             }
 
             if (state.elapsedSeconds % 20 === 0 && !state.isSleeping && !eventActive) {
-                if (Math.random() <= 0.25) {
+                if (Math.random() <= 0.20) {
                     triggerRandomIncident();
                 }
             }
@@ -503,10 +508,10 @@
                 },
                 {
                     title: "⚠️ PECTORAL TEAR",
-                    desc: "Ego lifting backfired on the bench press. Muscle Mass -8, Energy -25.",
+                    desc: "Ego lifting backfired on the bench press. Muscle Mass -6, Energy -20.",
                     action: () => { 
-                        state.muscle = Math.max(0, state.muscle - 8); 
-                        state.energy = Math.max(0, state.energy - 25); 
+                        state.muscle = Math.max(0, state.muscle - 6); 
+                        state.energy = Math.max(0, state.energy - 20); 
                         if(state.muscle <= 0) executeKillSequence("FATAL INJURY: Muscle tissue completely degenerated.");
                     }
                 },
@@ -517,8 +522,8 @@
                 },
                 {
                     title: "☣️ BATCH CONTAMINATION",
-                    desc: "Your research chemical supply was unverified. Toxicity Strain surges +20%.",
-                    action: () => { state.toxicity = Math.min(100, state.toxicity + 20); }
+                    desc: "Your supply was unverified. Toxicity Strain surges +15%.",
+                    action: () => { state.toxicity = Math.min(100, state.toxicity + 15); }
                 }
             ];
 
@@ -547,31 +552,48 @@
             setTimeout(() => { if(!state.isDead) notice.innerText = "SYS: AUTO_OK"; }, 800);
         }
 
+        // DECOUPLED HARDFIX RESET METHOD
         function clearSaveAndReset() {
+            if (executionInterval) {
+                clearInterval(executionInterval);
+                executionInterval = null;
+            }
             localStorage.removeItem('swolegotchi_v4_save');
-            initGame();
+            // Hard refresh the document execution space to clear hanging loops
+            window.location.reload();
         }
 
         function executeWorkout() {
-            if (state.energy < 25 || state.fullness < 20 || state.isSleeping || eventActive) return;
+            const energyCost = state.fat > 40 ? 35 : 25;
+            if (state.energy < energyCost || state.fullness < 20 || state.isSleeping || eventActive) return;
 
             let yieldCalculation = 4 + state.proteinUpgrades;
             if (state.toxicity > 75) yieldCalculation = yieldCalculation * 0.5;
+            if (state.fat > 50) yieldCalculation = yieldCalculation * 0.7;
 
             state.muscle += yieldCalculation;
-            state.energy = Math.max(0, state.energy - 25);
+            state.energy = Math.max(0, state.energy - energyCost);
             state.fullness = Math.max(0, state.fullness - 20);
+
+            if (state.fat > 0) {
+                state.fat = Math.max(0, state.fat - 12);
+            }
 
             animateDisplayAvatar();
             renderInterface();
         }
 
         function executeJobShift() {
-            if (state.energy < 30 || state.isSleeping || eventActive) return;
+            const energyCost = state.fat > 40 ? 40 : 30;
+            if (state.energy < energyCost || state.isSleeping || eventActive) return;
 
             state.cash += 35;
-            state.energy = Math.max(0, state.energy - 30);
+            state.energy = Math.max(0, state.energy - energyCost);
             state.fullness = Math.max(0, state.fullness - 10); 
+
+            if (state.fat > 0) {
+                state.fat = Math.max(0, state.fat - 3);
+            }
 
             renderInterface();
         }
@@ -596,15 +618,27 @@
 
             switch(type) {
                 case 'food':
-                    if (state.cash >= 8 && state.fullness < CAPACITIES.maxFullness) {
+                    if (state.cash >= 8) {
                         state.cash -= 8;
-                        state.fullness = Math.min(CAPACITIES.maxFullness, state.fullness + 35);
+                        if (state.fullness >= CAPACITIES.maxFullness) {
+                            state.fat = Math.min(CAPACITIES.maxFat, state.fat + 20);
+                        } else {
+                            state.fullness += 35;
+                            if (state.fullness > CAPACITIES.maxFullness) {
+                                let excess = state.fullness - CAPACITIES.maxFullness;
+                                state.fullness = CAPACITIES.maxFullness;
+                                state.fat = Math.min(CAPACITIES.maxFat, state.fat + (excess * 0.6));
+                            }
+                        }
                     }
                     break;
                 case 'protein':
                     if (state.cash >= 25) {
                         state.cash -= 25;
                         state.proteinUpgrades += 1;
+                        if (state.fullness >= CAPACITIES.maxFullness) {
+                            state.fat = Math.min(CAPACITIES.maxFat, state.fat + 5);
+                        }
                     }
                     break;
                 case 'preworkout':
@@ -618,7 +652,7 @@
                     if (state.cash >= 60) {
                         state.cash -= 60;
                         state.muscle += 35; 
-                        state.toxicity += 38; 
+                        state.toxicity += 35; 
                     }
                     break;
             }
@@ -630,12 +664,16 @@
             document.getElementById('statCash').innerText = `$${state.cash}`;
             document.getElementById('statFullness').innerText = Math.floor(state.fullness);
             document.getElementById('statEnergy').innerText = Math.floor(state.energy);
+            document.getElementById('statFat').innerText = `${Math.floor(state.fat)}%`;
             document.getElementById('statToxicity').innerText = `${Math.floor(state.toxicity)}%`;
 
             const activeLocks = state.isSleeping || eventActive;
-            document.getElementById('btnTrain').disabled = activeLocks || state.energy < 25 || state.fullness < 20;
-            document.getElementById('btnJob').disabled = activeLocks || state.energy < 30;
-            document.getElementById('btnBuyFood').disabled = activeLocks || state.cash < 8 || state.fullness >= CAPACITIES.maxFullness;
+            const dynamicTrainCost = state.fat > 40 ? 35 : 25;
+            const dynamicJobCost = state.fat > 40 ? 40 : 30;
+
+            document.getElementById('btnTrain').disabled = activeLocks || state.energy < dynamicTrainCost || state.fullness < 20;
+            document.getElementById('btnJob').disabled = activeLocks || state.energy < dynamicJobCost;
+            document.getElementById('btnBuyFood').disabled = activeLocks || state.cash < 8; 
             document.getElementById('btnBuyProtein').disabled = activeLocks || state.cash < 25;
             document.getElementById('btnBuyPre').disabled = activeLocks || state.cash < 15;
             document.getElementById('btnBuySauce').disabled = activeLocks || state.cash < 60;
@@ -649,7 +687,10 @@
                 return;
             }
 
-            if (state.muscle < 15) {
+            if (state.fat >= 45) {
+                avatarEl.innerText = "🐋";
+                statusEl.innerText = "CRIT: CALORIC OVERFLOW STATUS";
+            } else if (state.muscle < 15) {
                 avatarEl.innerText = "🧍";
                 statusEl.innerText = "WARN: UNDERSIZED FRAME";
             } else if (state.muscle >= 15 && state.muscle < 75) {
@@ -669,6 +710,8 @@
                 statusEl.innerText = "🚨 CATABOLIC STARVATION DETECTED";
             } else if (state.energy < 20) {
                 statusEl.innerText = "WARN: CNS EXHAUSTION";
+            } else if (state.fat > 30 && state.fat < 45) {
+                statusEl.innerText = "NOTICE: HIGH LIPID ACCUMULATION";
             }
         }
 
@@ -682,10 +725,8 @@
             state.isDead = true;
             if (executionInterval) clearInterval(executionInterval);
             
-            // Instantly write the true dead state to local cache memory
             localStorage.setItem('swolegotchi_v4_save', JSON.stringify(state));
             
-            // Pop open the interface blocker
             document.getElementById('deathReason').innerText = reason;
             document.getElementById('deathScreen').style.display = 'flex';
             renderInterface();
